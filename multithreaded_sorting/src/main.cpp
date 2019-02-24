@@ -4,8 +4,9 @@
 
 #include "constants.h"
 #include "sort.h"
+#include "sortmp.h"
 
-void gen_rand_num(int *array)
+void gen_rand_num(int *array, int size)
 {
     srand(time(NULL));
 
@@ -15,16 +16,21 @@ void gen_rand_num(int *array)
 
 int main()
 {
-    int *Array = new int[size];
+    //test();
+    //int *Array = new int[size];
 
-    gen_rand_num(Array);
+    int Array[10] = {9, 8, 7, 6, 5, 4, 3, 0, 1, 2};
+
+    //gen_rand_num(Array, size);
+
+
 
     for(int i = 0; i < 10; ++i)
         std::cout << Array[i] << "\t";
     
     std::cout << std::endl;
 
-    quick_sort(Array, size - 1);
+    sel_sort_mp(Array, size);
 
     for(int i = 0; i < 10; ++i)
         std::cout << Array[i] << "\t";

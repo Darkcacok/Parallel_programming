@@ -1,7 +1,10 @@
-exe: sort
-	g++ main.cpp sort.o -o exe
+exe: sort sortmp
+	g++ -g main.cpp sort.o sortmp.o -fopenmp -o exe
 sort:
-	g++ -c sort.cpp
+	g++ -c -g sort.cpp
+
+sortmp:
+	g++ -c -g sortmp.cpp -fopenmp
 
 clean:
 	rm *.o exe
