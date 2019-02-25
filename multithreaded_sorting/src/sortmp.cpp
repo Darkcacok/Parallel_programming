@@ -33,7 +33,7 @@ int *copy_part_array(int *array, int *part_idx, int size)
 
 void move_part_array(int *array, int *part_idx, int thread, int edge)
 {
-    for(int i = edge, j = 0; i < edge + edge && j < thread; ++i, ++j)
+    for(int i = edge, j = 0; i < edge + thread && j < thread; ++i, ++j)
     {
         array[part_idx[j]] = array[i];
     }
@@ -42,6 +42,16 @@ void move_part_array(int *array, int *part_idx, int thread, int edge)
 void sort_buf(int *buf, int size)
 {
     sel_sort(buf, size);
+}
+
+int min_search(int *array, int *min, int size)
+{
+    int min_idx = min[0];
+    for(int i = 1; i < size; ++i)
+        if(array[min_idx] > array[min[i]])
+            min_idx = min[i];
+    
+    return min_idx;
 }
 
 void sel_sort_mp(int *array, const int size)
@@ -54,20 +64,20 @@ void sel_sort_mp(int *array, const int size)
     omp_set_num_threads(thread);
 
     int i = 0;
-    for (i; i < size - thread; i += thread)
+    for (i; i < size - thread; ++i)
     {
         step = (size - i) / thread;
         for (int j = 0; j < thread - 1; ++j)
         {
-            threads[j] = j * step + step;
+            threads[j] = i + j * step + step;
         }
         threads[thread - 1] = size;
 
-        for (int j = 0; j < thread; ++j)
+        for (int j = 0; j < thread-1; ++j)
         {
             min[j] = threads[j] - 1;
         }
-
+        min[thread - 1] = size;
 
         /*int j;
         int target_thread;*/
@@ -88,22 +98,14 @@ void sel_sort_mp(int *array, const int size)
                 if (array[j] < array[min[target_thread]])
                     min[target_thread] = j;
             }
-
         }
-
-        int *buf = copy_part_array(array, min, thread);
-        move_part_array(array, min, thread, i);
-        sort_buf(buf, thread);
-
-        for(int j = i, k = 0; j < i + thread; ++j, ++k)
-            array[j] = buf[k];
-
-        /*if (min_i != i)
+        /*for(int k = 0; k < thread; ++k)
         {
-            std::swap(array[i], array[min_i]);
-            min_i = i;
-        }*/
+            std::cout << array[min[k]] << "\t";
+        }
+        std::cout << std::endl;*/
 
+        std::swap(array[i], array[min_search(array, min, thread)]);
     }
 
     sort_buf(array+i, size - i);
