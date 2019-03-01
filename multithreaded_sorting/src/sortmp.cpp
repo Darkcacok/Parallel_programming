@@ -1,5 +1,6 @@
 #include <omp.h>
 #include <iostream>
+#include <string.h>
 
 #include "sortmp.h"
 #include "sort.h"
@@ -23,7 +24,7 @@ int *copy_part_array(int *array, int *part_idx, int size)
 {
     int *buf = new int[size];
 
-    for(int i = 0; i < size; ++i)
+    for (int i = 0; i < size; ++i)
     {
         buf[i] = array[part_idx[i]];
     }
@@ -33,7 +34,7 @@ int *copy_part_array(int *array, int *part_idx, int size)
 
 void move_part_array(int *array, int *part_idx, int thread, int edge)
 {
-    for(int i = edge, j = 0; i < edge + thread && j < thread; ++i, ++j)
+    for (int i = edge, j = 0; i < edge + thread && j < thread; ++i, ++j)
     {
         array[part_idx[j]] = array[i];
     }
@@ -47,10 +48,10 @@ void sort_buf(int *buf, int size)
 int min_search(int *array, int *min, int size)
 {
     int min_idx = min[0];
-    for(int i = 1; i < size; ++i)
-        if(array[min_idx] > array[min[i]])
+    for (int i = 1; i < size; ++i)
+        if (array[min_idx] > array[min[i]])
             min_idx = min[i];
-    
+
     return min_idx;
 }
 
@@ -73,7 +74,7 @@ void sel_sort_mp(int *array, const int size)
         }
         threads[thread - 1] = size;
 
-        for (int j = 0; j < thread-1; ++j)
+        for (int j = 0; j < thread - 1; ++j)
         {
             min[j] = threads[j] - 1;
         }
@@ -108,5 +109,81 @@ void sel_sort_mp(int *array, const int size)
         std::swap(array[i], array[min_search(array, min, thread)]);
     }
 
-    sort_buf(array+i, size - i);
+    sort_buf(array + i, size - i);
+}
+
+void shaker_sort_mp(int *array, const int size)
+{
+    /*int *tmp1 = new int[size];
+    memcpy(tmp1, array, sizeof(int) * size);
+
+    int *tmp2 = new int[size];
+    memcpy(tmp2, array, sizeof(int) * size);
+
+    int part_one = size >> 1;
+    int part_two = size - part_one;
+
+    #pragma omp parallel sections
+    {
+        #pragma omp section
+        {
+            for (int i = 0, right = size - 1; i < part_one; ++i, --right)
+            {
+                for (int j = 0; j < right; ++j)
+                {
+                    if (tmp1[j + 1] < tmp1[j])
+                        std::swap(tmp1[j], tmp1[j + 1]);
+                }
+            }
+        }
+
+        #pragma omp section
+        {
+            for (int i = 0, left = 0; i < part_two; ++i, ++left)
+            {
+                for (int j = size; j > left; --j)
+                {
+                    if (tmp2[j - 1] > tmp2[j])
+                        std::swap(tmp2[j - 1], tmp2[j]);
+                }
+            }
+        }
+    }
+
+    #pragma omp parallel
+    for (int i = part_one; i < size; ++i)
+        array[i] = tmp1[i];
+    
+    #pragma omp parallel
+    for (int i = 0; i < part_two; ++i)
+        array[i] = tmp2[i];*/
+}
+
+
+
+
+void quick_sort_mp(int *array, int N)
+{
+    int i =0, j = N;
+    int p = array[N>>1];
+
+    do
+    {
+        while(array[i] < p) ++i;
+        while(array[j] > p) --j;
+
+        if( i <= j)
+        {
+            std::swap(array[i], array[j]);
+            ++i; --j;
+        }
+    }while( i<= j);
+
+    #pragma omp parallel sections
+    {
+        #pragma omp section
+        if(j > 0) quick_sort(array, j);
+        #pragma omp section
+        if(N > i) quick_sort(array + i, N - i);
+    }
 }
