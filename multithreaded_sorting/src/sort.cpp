@@ -43,7 +43,7 @@ void shaker_sort(int *array, const int size)
 
 void quick_sort(int *array, int N)
 {
-    int i =0, j = N -1;
+    int i =0, j = N;
     int p = array[N>>1];
 
     do
@@ -59,5 +59,5 @@ void quick_sort(int *array, int N)
     }while( i<= j);
 
     if(j > 0) quick_sort(array, j);
-    if(N > i) quick_sort(array, N - i);
+    if(N > i) quick_sort(array + i, N - i);
 }
