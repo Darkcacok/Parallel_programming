@@ -8,7 +8,7 @@
 #include "sort.h"
 #include "sortmp.h"
 
-bool test(int *array, int size)
+bool check_array_sort(int *array, int size)
 {
     for (int i = 0; i < size - 1; ++i)
     {
@@ -16,6 +16,7 @@ bool test(int *array, int size)
             continue;
         else
         {
+            std::cout << std::endl;
             std::cout << array[i] << " > " << array[i + 1] << std::endl;
             return false;
         }
@@ -66,13 +67,12 @@ int main()
     time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
     std::cout << "One thread time = " << time_span.count();
 
-    if (test(test_array, size))
+    if (check_array_sort(test_array, size))
         std::cout << ". Sorting is successful" << std::endl;
     else
         std::cout << ". Sorting is fail" << std::endl;
 
-    /****************************************************************/
-
+    /*************************************************************************/
     memcpy(test_array, array, sizeof(int) * size);
 
     t1 = std::chrono::steady_clock::now();
@@ -81,17 +81,15 @@ int main()
     time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
     std::cout << "Multithreading time = " << time_span.count();
 
-    if (test(test_array, size))
+    if (check_array_sort(test_array, size))
         std::cout << ". Sorting is successful" << std::endl;
     else
         std::cout << ". Sorting is fail" << std::endl;
 
     std::cout << "Selection sort is finish" << std::endl << std::endl;
     
-    /*-----------------Shaker sort---------------------------------------------*/
-    
+    /*-----------------Shaker sort--------------------------------------------*/
     memcpy(test_array, array, sizeof(int) * size);
-
 
     std::cout << "Shaker sort is start" << std::endl;
 
@@ -102,14 +100,13 @@ int main()
     std::cout << "One thread time = " << time_span.count() << " ";
 
 
-    if (test(test_array, size))
+    if (check_array_sort(test_array, size))
         std::cout << ". Sorting is successful" << std::endl;
     else
         std::cout << ". Sorting is fail" << std::endl;
-    /****************************************************************************/
 
+    /***************************************************************************/
     memcpy(test_array, array, sizeof(int) * size);
-
 
     t1 = std::chrono::steady_clock::now();
     shaker_sort_mp(test_array, size);
@@ -117,7 +114,7 @@ int main()
     time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
     std::cout << "Multithreading time = " << time_span.count();
 
-    if (test(test_array, size))
+    if (check_array_sort(test_array, size))
         std::cout << ". Sorting is successful" << std::endl;
     else
         std::cout << ". Sorting is fail" << std::endl;
@@ -126,7 +123,6 @@ int main()
 
 
     /*---------------------Quick sort-----------------------------------------------*/
-    
     memcpy(test_array, array, sizeof(int) * size);
 
     std::cout << "Quick sort is start" << std::endl;
@@ -137,26 +133,24 @@ int main()
     time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
     std::cout << "One thread time = " << time_span.count() << " ";
 
-    if (test(test_array, size - 1))
+    if (check_array_sort(test_array, size - 1))
         std::cout << ". Sorting is successful" << std::endl;
     else
         std::cout << ". Sorting is fail" << std::endl;
-    /*******************************************************************************/
 
+    /*******************************************************************************/
     memcpy(test_array, array, sizeof(int) * size);
 
     t1 = std::chrono::steady_clock::now();
-    quick_sort_mp(test_array, size - 1);
+    quick_sort_mp(test_array, size);
     t2 = std::chrono::steady_clock::now();
     time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
     std::cout << "Multithreading time = " << time_span.count();
 
-    if (test(test_array, size))
+    if (check_array_sort(test_array, size))
         std::cout << ". Sorting is successful" << std::endl;
     else
         std::cout << ". Sorting is fail" << std::endl;
 
-    std::cout << "Shacker sort is finish" << std::endl << std::endl;
-
-
+    std::cout << "Quick sort is finish" << std::endl << std::endl;
 }
